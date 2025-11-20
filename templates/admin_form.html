@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ "Add Case" if mode == "add" else "Edit Case" }} - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .flash {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        label .required {
+            color: #dc3545;
+        }
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        textarea {
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ "Add New Case" if mode == "add" else "Edit Case" }}</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post">
+            <div class="form-group">
+                <label>
+                    CaseID <span class="required">*</span>
+                </label>
+                {% if mode == "add" %}
+                    <input type="text" name="CaseID" value="{{ data.CaseID or '' }}" required placeholder="e.g., CH-UM-004">
+                    <div class="help-text">Unique identifier for this case</div>
+                {% else %}
+                    <input type="text" value="{{ data.CaseID }}" readonly>
+                    <div class="help-text">CaseID cannot be changed after creation</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>
+                    UserType <span class="required">*</span>
+                </label>
+                <input type="text" name="UserType" value="{{ data.UserType or '' }}" required placeholder="e.g., شركة عمرة">
+                <div class="help-text">Type of user this case applies to</div>
+            </div>
+
+            <div class="form-group">
+                <label>AccountStatus</label>
+                <input type="text" name="AccountStatus" value="{{ data.AccountStatus or '' }}" placeholder="e.g., active">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Category <span class="required">*</span>
+                </label>
+                <input type="text" name="Category" value="{{ data.Category or '' }}" required placeholder="e.g., تحديث البيانات">
+                <div class="help-text">Main category of the issue</div>
+            </div>
+
+            <div class="form-group">
+                <label>SubCategory</label>
+                <input type="text" name="SubCategory" value="{{ data.SubCategory or '' }}" placeholder="e.g., تحديث بيانات المفوض">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    MainKeywords <span class="required">*</span>
+                </label>
+                <textarea name="MainKeywords" rows="3" required placeholder="Comma-separated keywords, e.g., تعديل, اسم, المفوض">{{ (data.MainKeywords or []) | join(", ") }}</textarea>
+                <div class="help-text">Primary keywords for matching (comma-separated). These get +2 points each.</div>
+            </div>
+
+            <div class="form-group">
+                <label>ExtraKeywords</label>
+                <textarea name="ExtraKeywords" rows="2" placeholder="Comma-separated keywords, e.g., تغيير, تصحيح">{{ (data.ExtraKeywords or []) | join(", ") }}</textarea>
+                <div class="help-text">Additional keywords for better matching (+1 point each)</div>
+            </div>
+
+            <div class="form-group">
+                <label>Synonyms</label>
+                <textarea name="Synonyms" rows="2" placeholder="Comma-separated synonyms, e.g., موظف, مندوب">{{ (data.Synonyms or []) | join(", ") }}</textarea>
+                <div class="help-text">Alternative terms</div>
+            </div>
+
+            <div class="form-group">
+                <label>NegativeKeywords</label>
+                <textarea name="NegativeKeywords" rows="2" placeholder="Comma-separated keywords to exclude, e.g., سكن">{{ (data.NegativeKeywords or []) | join(", ") }}</textarea>
+                <div class="help-text">If ANY of these keywords match, this case will be excluded</div>
+            </div>
+
+            <div class="form-group">
+                <label>Priority</label>
+                <select name="Priorty">
+                    {% set v = data.Priorty or "" %}
+                    <option value="">-- Select Priority --</option>
+                    <option value="High" {{ "selected" if v == "High" else "" }}>High</option>
+                    <option value="Medium" {{ "selected" if v == "Medium" else "" }}>Medium</option>
+                    <option value="Low" {{ "selected" if v == "Low" else "" }}>Low</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    ResponseText <span class="required">*</span>
+                </label>
+                <textarea name="ResponseText" rows="8" required placeholder="The actual solution to provide to the user...">{{ data.ResponseText or "" }}</textarea>
+                <div class="help-text">The solution/response that will be shown to the support agent</div>
+            </div>
+
+            <div class="form-group">
+                <label>Why</label>
+                <textarea name="Why" rows="3" placeholder="Explanation of why this solution works...">{{ data.Why or "" }}</textarea>
+                <div class="help-text">Explanation of why this solution works</div>
+            </div>
+
+            <div class="form-group">
+                <label>FallbackText</label>
+                <textarea name="FallbackText" rows="3" placeholder="Alternative solution if main solution fails...">{{ data.FallbackText or "" }}</textarea>
+                <div class="help-text">Alternative if main solution fails</div>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="Notes" rows="3" placeholder="Internal notes...">{{ data.Notes or "" }}</textarea>
+                <div class="help-text">Internal notes (not shown to end users)</div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    {{ "Create Case" if mode == "add" else "Update Case" }}
+                </button>
+                <a href="/admin" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

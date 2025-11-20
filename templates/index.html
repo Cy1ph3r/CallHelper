@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Call Helper</title>
+
+    <style>
+        /* 
+           تنسيق الصفحة بالكامل:
+           - خلفية
+           - نوع الخط
+           - ترتيب النص
+        */
+        body {
+            font-family: "Cairo", sans-serif;
+            background-color: #f3f6f4;
+            text-align: center;
+        }
+
+        /* عنوان الصفحة فوق */
+        h1 {
+            margin-top: 30px;
+            color: #1f7bbf;
+            font-size: 32px;
+        }
+
+        /* 
+           الصندوق لفورم كامل (النموذج):
+           - العرض
+           - المسافات
+           - البوكس شادو
+           - الحدود
+        */
+        .form-container {
+            background-color: #ffffff;
+            width: 60%;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            text-align: right;
+        }
+
+        /* تنسيق أسماء الحقول (Label) */
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            padding-right: 4px;
+        }
+
+        /* 
+           تنسيق التكست انبوت والدروب داون:
+           - عرض كامل
+           - حدود
+           - حواف دائرية
+           - تكبير الخط
+        */
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* 
+           زر توليد الصيغة:
+           - لون
+           - حجم
+           - تنسيق
+        */
+        button {
+            display: block;
+            margin: 20px auto 0 auto;
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            background-color: #2174ab;
+            color: white;
+            cursor: pointer;
+            font-size: 19px;
+            font-weight: 700;
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        button:hover {
+            background-color: #1a5a85;
+        }
+
+        /* زر الوضع المتقدم */
+        .advanced-toggle {
+            background-color: #28a745;
+            font-size: 16px;
+            padding: 10px 25px;
+            margin: 10px auto;
+            display: none;
+        }
+
+        .advanced-toggle.show {
+            display: block;
+        }
+
+        .advanced-toggle:hover {
+            background-color: #218838;
+        }
+
+        /* قسم الفلاتر المتقدمة */
+        .advanced-filters {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #28a745;
+        }
+
+        .advanced-filters.active {
+            display: block;
+        }
+
+        .advanced-title {
+            color: #28a745;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* منطقة عرض النتائج */
+        .results-container {
+            background-color: #ffffff;
+            width: 60%;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            text-align: right;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        .result-title {
+            color: #1f7bbf;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1f7bbf;
+            padding-bottom: 10px;
+        }
+
+        .result-content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            text-align: right;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .loading {
+            text-align: center;
+            color: #1f7bbf;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* زر رفيق المساعد */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #0078D4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            background-color: #005a9e;
+        }
+
+        .chat-button svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        /* نافذة المحادثة */
+        .chat-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background-color: #0078D4;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-message.user {
+            align-items: flex-end;
+        }
+
+        .chat-message.bot {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .chat-message.user .message-bubble {
+            background-color: #0078D4;
+            color: white;
+        }
+
+        .chat-message.bot .message-bubble {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            background-color: white;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            border-color: #0078D4;
+        }
+
+        .chat-send-btn {
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .chat-send-btn:hover {
+            background-color: #005a9e;
+        }
+
+        .chat-send-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        /* أزرار الرد السريع */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-reply-btn {
+            background-color: white;
+            border: 2px solid #0078D4;
+            color: #0078D4;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .quick-reply-btn:hover {
+            background-color: #0078D4;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .chat-modal {
+                width: 90%;
+                height: 80%;
+                right: 5%;
+                bottom: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- عنوان الصفحة -->
+    <h1>Smart Call Helper</h1>
+
+    <!-- 
+         نموذج سحب البيانات من المستخدم
+         ويحطها في POST request → للسيرفر على /search
+    -->
+    <form class="form-container" id="searchForm" onsubmit="handleSubmit(event)">
+
+        <!-- حقل اسم العميل -->
+        <label for="caller_name">اسم العميل:</label>
+        <input name="caller_name" id="caller_name" type="text" required>
+
+        <!-- حقل نوع المستخدم (دروب داون) -->
+        <label for="caller_type">نوع المستخدم:</label>
+        <select name="caller_type" id="caller_type" required>
+            <option value="">اختر نوع المستخدم</option>
+            <option value="شركة عمرة">شركة عمرة</option>
+            <option value="وكيل خارجي">وكيل خارجي</option>
+            <option value="مزود خدمة السكن">مزود خدمة السكن</option>
+        </select>
+
+        <!-- حقل وصف المشكلة -->
+        <label for="issue_description">وصف المشكلة:</label>
+        <input name="issue_description" id="issue_description" type="text" required>
+
+        <!-- زر إرسال البيانات للسيرفر -->
+        <button type="submit">توليد الصيغة</button>
+
+    </form>
+
+    <!-- منطقة عرض النتائج -->
+    <div class="results-container" id="resultsContainer">
+        <div class="result-title">النتيجة:</div>
+        <div class="result-content" id="resultContent"></div>
+        
+        <!-- زر الوضع المتقدم -->
+        <button type="button" class="advanced-toggle" id="advancedToggle" onclick="toggleAdvancedMode()">
+            ⚙️ الوضع المتقدم
+        </button>
+        
+        <!-- قسم الفلاتر المتقدمة -->
+        <div class="advanced-filters" id="advancedFilters">
+            <div class="advanced-title">فلاتر متقدمة</div>
+
+            <!-- Activation -->
+            <label for="activation"> حالة الحساب (Activation):</label>
+            <select name="activation" id="activation">
+                <option value="">اختر حالة التفعيل</option>
+                <option value="registered">مسجل (Registered)</option>
+                <option value="activated">مفعل (Activated)</option>
+                <option value="non">غير محدد (Non)</option>
+            </select>
+
+            <!-- Registration -->
+            <label for="registration">حالة التسجيل (Registration):</label>
+            <select name="registration" id="registration">
+                <option value="">اختر حالة التسجيل</option>
+                <option value="activation">تفعيل (Activation)</option>
+                <option value="registration">تسجيل (Registration)</option>
+                <option value="non">غير محدد (Non)</option>
+            </select>
+
+            <!-- Request Status -->
+            <label for="request_status">حالة الطلب (Request Status):</label>
+            <select name="request_status" id="request_status">
+                <option value="">اختر حالة الطلب</option>
+                <option value="under_process">قيد المعالجة (Under Process)</option>
+                <option value="under_review">قيد المراجعة (Under Review)</option>
+                <option value="rejected">مرفوض (Rejected)</option>
+                <option value="waiting_moh">بانتظار موافقة الصحة (Waiting for Approval of MOH)</option>
+            </select>
+            
+            <!-- زر تطبيق الفلاتر -->
+            <button type="button" onclick="applyAdvancedFilters()" style="background-color: #28a745; margin-top: 10px;">تطبيق الفلاتر</button>
+        </div>
+    </div>
+
+    <script>
+        // دالة لإظهار/إخفاء الوضع المتقدم
+        function toggleAdvancedMode() {
+            const advancedFilters = document.getElementById('advancedFilters');
+            advancedFilters.classList.toggle('active');
+            
+            // تغيير نص الزر
+            const btn = event.target;
+            if (advancedFilters.classList.contains('active')) {
+                btn.textContent = '⚙️ إخفاء الوضع المتقدم';
+            } else {
+                btn.textContent = '⚙️ الوضع المتقدم';
+            }
+        }
+
+        // دالة إرسال النموذج عبر AJAX
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('searchForm');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultContent = document.getElementById('resultContent');
+            const advancedToggle = document.getElementById('advancedToggle');
+            
+            // إظهار رسالة التحميل
+            resultsContainer.classList.add('show');
+            resultContent.innerHTML = '<div class="loading">⏳ جاري البحث وتوليد النتيجة...</div>';
+            
+            // تجميع بيانات النموذج
+            const formData = new FormData(form);
+            
+            // إضافة الفلاتر المتقدمة إذا كانت مفعلة
+            const advancedFilters = document.getElementById('advancedFilters');
+            if (advancedFilters && advancedFilters.classList.contains('active')) {
+                formData.append('activation', document.getElementById('activation').value);
+                formData.append('registration', document.getElementById('registration').value);
+                formData.append('request_status', document.getElementById('request_status').value);
+            }
+            
+            try {
+                // إرسال الطلب للسيرفر
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.result) {
+                        resultContent.textContent = data.result;
+                        // إظهار زر الوضع المتقدم بعد ظهور النتيجة
+                        advancedToggle.classList.add('show');
+                    } else if (data.error) {
+                        resultContent.innerHTML = '<div class="error">' + data.error + '</div>';
+                    }
+                } else {
+                    resultContent.innerHTML = '<div class="error">حدث خطأ في الاتصال بالسيرفر</div>';
+                }
+            } catch (error) {
+                resultContent.innerHTML = '<div class="error">حدث خطأ: ' + error.message + '</div>';
+            }
+            
+            // التمرير إلى النتائج
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // دالة تطبيق الفلاتر المتقدمة
+        function applyAdvancedFilters() {
+            // إرسال النموذج مرة أخرى مع الفلاتر
+            const form = document.getElementById('searchForm');
+            const event = new Event('submit', { cancelable: true });
+            form.dispatchEvent(event);
+            handleSubmit(event);
+        }
+    </script>
+
+    <!-- زر رفيق المساعد -->
+    <div class="chat-button" onclick="toggleChat()" title="رفيق - مساعدك الذكي">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+            <circle cx="8" cy="10" r="1.5"/>
+            <circle cx="12" cy="10" r="1.5"/>
+            <circle cx="16" cy="10" r="1.5"/>
+        </svg>
+    </div>
+
+    <!-- نافذة المحادثة -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-header">
+            <h3>🤖 رفيق - مساعدك الذكي</h3>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- الرسالة الترحيبية سيتم تحميلها عبر JavaScript -->
+        </div>
+        <div class="typing-indicator" id="typingIndicator">رفيق يكتب...</div>
+        <div class="chat-input-container">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="اكتب سؤالك هنا..."
+                onkeypress="handleChatKeyPress(event)">
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">
+                إرسال
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // دالة إظهار/إخفاء نافذة رفيق
+        let chatInitialized = false;
+        let sessionId = null;
+        function toggleChat() {
+            const chatModal = document.getElementById('chatModal');
+            chatModal.classList.toggle('active');
+            
+            // تحميل الرسالة الترحيبية عند أول فتح
+            if (!chatInitialized && chatModal.classList.contains('active')) {
+                chatInitialized = true;
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_first: true, session_id: sessionId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        sessionId = data.session_id;
+                        addChatMessage(data.response, 'bot', data.quick_replies);
+                    }
+                })
+                .catch(err => {
+                    addChatMessage('مرحباً! أنا رفيق، مساعدك الذكي.', 'bot');
+                });
+            }
+        }
+
+        // دالة إرسال رسالة في الشات
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // إضافة رسالة المستخدم
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // إظهار مؤشر الكتابة
+            const typingIndicator = document.getElementById('typingIndicator');
+            const sendBtn = document.getElementById('chatSendBtn');
+            typingIndicator.classList.add('active');
+            sendBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_type: document.getElementById('caller_type').value || 'شركة عمرة',
+                        session_id: sessionId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // إضافة رد البوت
+                if (data.success) {
+                    sessionId = data.session_id;
+                    addChatMessage(data.response, 'bot', data.quick_replies);
+                } else {
+                    addChatMessage(data.response || 'حدث خطأ، الرجاء المحاولة مرة أخرى', 'bot');
+                }
+            } catch (error) {
+                addChatMessage('حدث خطأ في الاتصال. الرجاء المحاولة مرة أخرى.', 'bot');
+            } finally {
+                typingIndicator.classList.remove('active');
+                sendBtn.disabled = false;
+            }
+        }
+        
+        // دالة إضافة رسالة للشات
+        function addChatMessage(text, sender, quickReplies = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = text;
+            
+            messageDiv.appendChild(bubbleDiv);
+            
+            // إضافة أزرار الرد السريع إذا وجدت
+            if (quickReplies && quickReplies.length > 0 && sender === 'bot') {
+                const quickRepliesDiv = document.createElement('div');
+                quickRepliesDiv.className = 'quick-replies';
+                
+                quickReplies.forEach(reply => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quick-reply-btn';
+                    btn.textContent = reply;
+                    btn.onclick = () => handleQuickReply(reply);
+                    quickRepliesDiv.appendChild(btn);
+                });
+                
+                messageDiv.appendChild(quickRepliesDiv);
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            // التمرير لأسفل
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // دالة معالجة الضغط على أزرار الرد السريع
+        function handleQuickReply(text) {
+            // إخفاء جميع أزرار الرد السريع السابقة
+            const allQuickReplies = document.querySelectorAll('.quick-replies');
+            allQuickReplies.forEach(qr => qr.style.display = 'none');
+            
+            // معالجة خاصة لبعض الأزرار
+            if (text === 'العودة للبداية') {
+                // مسح المحادثة وإرسال رسالة ترحيبية
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.innerHTML = '';
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_first: true, session_id: null })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        sessionId = data.session_id;
+                        addChatMessage(data.response, 'bot', data.quick_replies);
+                    }
+                });
+                return;
+            }
+            
+            // إرسال النص كرسالة عادية
+            document.getElementById('chatInput').value = text;
+            sendChatMessage();
+        }
+        
+        // دالة معالجة ضغط Enter
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+    </script>
+
+</body>
+</html>
