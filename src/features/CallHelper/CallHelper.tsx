@@ -368,14 +368,13 @@ export function CallHelper() {
                   className="text-right min-h-[200px] resize-none border-2 border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-slate-800/50 rounded-lg px-4 py-3 transition-all"
                 />
                 
-                {/* Action Buttons - Hide when accuracy is 100% */}
+                {/* Action Buttons - Hide when accuracy is 80% or higher */}
                 {generatedText && (() => {
                   const maxScore = 10;
                   const percentage = currentMatchScore !== null ? Math.min(Math.round((currentMatchScore / maxScore) * 100), 100) : 0;
-                  const isPerfectMatch = percentage === 100;
                   
-                  // Don't show buttons if it's a perfect match
-                  if (isPerfectMatch) return null;
+                  // Don't show buttons if accuracy is 80% or higher
+                  if (percentage >= 80) return null;
                   
                   return (
                     <div className="flex items-center justify-between gap-3 pt-2">
