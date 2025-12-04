@@ -50,12 +50,12 @@ export function CategorySurveyDialog({ open, onOpenChange, onSubmit }: CategoryS
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md text-right" dir="rtl">
+      <DialogContent className="max-w-md text-right bg-white dark:bg-slate-900" dir="rtl">
         {/* Header */}
-        <div className="bg-gradient-to-br from-purple-600 to-purple-800 -mx-6 -mt-6 px-8 py-8 mb-6 text-center text-white rounded-t-lg">
+        <div className="bg-gradient-to-br from-amber-600 to-orange-600 -mx-6 -mt-6 px-8 py-8 mb-6 text-center text-white rounded-t-lg">
           <div className="text-5xl mb-4">🔍</div>
-          <DialogTitle className="text-2xl mb-2">لم تجد الحل المناسب؟</DialogTitle>
-          <DialogDescription className="text-purple-100 text-sm">
+          <DialogTitle className="text-2xl mb-2 text-white">لم تجد الحل المناسب؟</DialogTitle>
+          <DialogDescription className="text-amber-50 text-sm">
             ساعدنا في تحسين النتائج بتحديد نوع المشكلة
           </DialogDescription>
         </div>
@@ -72,7 +72,7 @@ export function CategorySurveyDialog({ open, onOpenChange, onSubmit }: CategoryS
                 key={category.id}
                 className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
                   selectedCategory === category.id
-                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md'
+                    ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 shadow-md'
                     : 'border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-slate-800 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
@@ -96,12 +96,12 @@ export function CategorySurveyDialog({ open, onOpenChange, onSubmit }: CategoryS
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     selectedCategory === category.id
-                      ? 'border-purple-500'
+                      ? 'border-amber-500'
                       : 'border-stone-300 dark:border-stone-600'
                   }`}
                 >
                   {selectedCategory === category.id && (
-                    <div className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                   )}
                 </div>
               </label>
@@ -121,13 +121,13 @@ export function CategorySurveyDialog({ open, onOpenChange, onSubmit }: CategoryS
         <div className="flex gap-3 mt-6">
           <button
             onClick={() => onOpenChange(false)}
-            className="flex-1 px-4 py-3 bg-stone-100 dark:bg-slate-800 text-stone-700 dark:text-stone-300 rounded-lg font-semibold hover:bg-stone-200 dark:hover:bg-slate-700 transition-colors border-2 border-stone-200 dark:border-stone-700"
+            className="flex-1 px-4 py-3 bg-stone-100 dark:bg-slate-800 text-stone-800 dark:text-stone-200 rounded-lg font-semibold hover:bg-stone-200 dark:hover:bg-slate-700 transition-colors border-2 border-stone-200 dark:border-stone-700"
           >
             إلغاء
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+            className="flex-1 px-4 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg font-semibold hover:from-amber-700 hover:to-orange-700 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
           >
             تحديث النتائج
           </button>
