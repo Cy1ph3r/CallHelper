@@ -368,75 +368,84 @@ export function CallHelper() {
                   className="text-right min-h-[200px] resize-none border-2 border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-slate-800/50 rounded-lg px-4 py-3 transition-all"
                 />
                 
-                {/* Action Buttons */}
-                {generatedText && (
-                  <div className="flex items-center justify-between gap-3 pt-2">
-                    {/* Right: Try Another Format */}
-                    <button
-                      onClick={() => {
-                        setActiveButton(activeButton === 'retry' ? null : 'retry');
-                        handleGenerateAlternative();
-                      }}
-                      disabled={resolveLoading}
-                      className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-                        activeButton === 'retry'
-                          ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
-                          : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
-                      }`}
-                    >
-                      {resolveLoading ? (
-                        <Loader className="size-3 animate-spin" />
-                      ) : (
-                        <RefreshCcw className="size-3" />
-                      )}
-                      <span>{resolveLoading ? '...' : 'جرب صيغة ثانية'}</span>
-                    </button>
+                {/* Action Buttons - Hide when accuracy is 100% */}
+                {generatedText && (() => {
+                  const maxScore = 10;
+                  const percentage = currentMatchScore !== null ? Math.min(Math.round((currentMatchScore / maxScore) * 100), 100) : 0;
+                  const isPerfectMatch = percentage === 100;
+                  
+                  // Don't show buttons if it's a perfect match
+                  if (isPerfectMatch) return null;
+                  
+                  return (
+                    <div className="flex items-center justify-between gap-3 pt-2">
+                      {/* Right: Try Another Format */}
+                      <button
+                        onClick={() => {
+                          setActiveButton(activeButton === 'retry' ? null : 'retry');
+                          handleGenerateAlternative();
+                        }}
+                        disabled={resolveLoading}
+                        className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          activeButton === 'retry'
+                            ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
+                            : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
+                        }`}
+                      >
+                        {resolveLoading ? (
+                          <Loader className="size-3 animate-spin" />
+                        ) : (
+                          <RefreshCcw className="size-3" />
+                        )}
+                        <span>{resolveLoading ? '...' : 'جرب صيغة ثانية'}</span>
+                      </button>
 
-                    {/* Center: Advanced Mode */}
-                    <button
-                      onClick={() => {
-                        setActiveButton(activeButton === 'advanced' ? null : 'advanced');
-                        /* TODO: AI advanced mode */
-                      }}
-                      className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
-                        activeButton === 'advanced'
-                          ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
-                          : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
-                      }`}
-                    >
-                      <Sliders className={`size-3 transition-transform duration-300 ${activeButton === 'advanced' ? 'rotate-12' : ''}`} />
-                      <span>وضع متقدم</span>
-                    </button>
+                      {/* Center: Advanced Mode */}
+                      <button
+                        onClick={() => {
+                          setActiveButton(activeButton === 'advanced' ? null : 'advanced');
+                          /* TODO: AI advanced mode */
+                        }}
+                        className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
+                          activeButton === 'advanced'
+                            ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
+                            : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
+                        }`}
+                      >
+                        <Sliders className={`size-3 transition-transform duration-300 ${activeButton === 'advanced' ? 'rotate-12' : ''}`} />
+                        <span>وضع متقدم</span>
+                      </button>
 
-                    {/* Left: Did it help? */}
-                    <TooltipProvider delayDuration={200}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              setActiveButton(activeButton === 'helpful' ? null : 'helpful');
-                              /* TODO: AI feedback */
-                            }}
-                            className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
-                              activeButton === 'helpful'
-                                ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
-                                : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
-                            }`}
+                      {/* Left: Did it help? */}
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setActiveButton(activeButton === 'helpful' ? null : 'helpful');
+                                /* TODO: AI feedback */
+                              }}
+                              className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
+                                activeButton === 'helpful'
+                                  ? 'bg-sky-200 dark:bg-sky-300 text-sky-800 dark:text-sky-900 shadow-lg'
+                                  : 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-800 dark:text-amber-200 shadow-md hover:shadow-lg'
+                              }`}
+                            >
+                              <Settings className={`size-3 transition-all duration-300 ${activeButton === 'helpful' ? 'scale-125 rotate-90' : ''}`} />
+                              <span>أفدتك؟</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent 
+                            side="top" 
+                            className="bg-stone-800/90 dark:bg-stone-200/90 text-white dark:text-stone-900 border-stone-700 dark:border-stone-300 backdrop-blur-sm"
                           >
-                            <Settings className={`size-3 transition-all duration-300 ${activeButton === 'helpful' ? 'scale-125 rotate-90' : ''}`} />
-                            <span>أفدتك؟</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent 
-                          side="top" 
-                          className="bg-stone-800/90 dark:bg-stone-200/90 text-white dark:text-stone-900 border-stone-700 dark:border-stone-300 backdrop-blur-sm"
-                        >
-                          <p className="text-sm">ما كانت دقيقة! علمني الصح</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                )}
+                            <p className="text-sm">ما كانت دقيقة! علمني الصح</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>
