@@ -8,10 +8,11 @@ import { Label } from '../../components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip';
 import { Badge } from '../../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../components/ui/dialog';
-import { Copy, CheckCircle2, MessageCircle, RefreshCcw, Sliders, Settings, Wand2, HelpCircle, Send, Bot, AlertCircle, Loader, Database } from 'lucide-react';
+import { Copy, CheckCircle2, MessageCircle, RefreshCcw, Sliders, Settings, Wand2, HelpCircle, Send, Bot, AlertCircle, Loader, Database, Target } from 'lucide-react';
 import { useResolve } from '../../hooks/useResolve';
 import { useChat } from '../../hooks/useChat';
 import { getErrorMessage } from '../../utils/errorHandler';
+import { CategorySurveyDialog } from '../../components/CategorySurveyDialog';
 
 export function CallHelper() {
   const [customerName, setCustomerName] = useState('');
@@ -31,6 +32,9 @@ export function CallHelper() {
   const [alternatives, setAlternatives] = useState<any[]>([]);
   const [currentAlternativeIndex, setCurrentAlternativeIndex] = useState(0);
   const [currentMatchScore, setCurrentMatchScore] = useState<number | null>(null);
+  const [cycleCount, setCycleCount] = useState(0);
+  const [showCategorySurvey, setShowCategorySurvey] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { resolve, loading: resolveLoading, error: resolveError } = useResolve();
   const {
@@ -103,6 +107,9 @@ export function CallHelper() {
       const nextMatch = alternatives[nextIndex];
       
       console.log('Showing alternative', nextIndex + 1, 'of', alternatives.length, nextMatch);
+      
+      // Increment cycle count
+      setCycleCount(prev => prev + 1);
       
       setGeneratedText(nextMatch.response_text || nextMatch.fallback || '');
       setWhyDescription(nextMatch.why || `الحل رقم ${nextIndex + 1} (درجة التطابق: ${nextMatch.score})`);
