@@ -410,7 +410,7 @@ export function CallHelper() {
                       {cycleCount >= 3 && (
                         <button
                           onClick={() => setShowCategorySurvey(true)}
-                          className="flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg animate-magic-appear"
+                          className="flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-semibold shadow-md hover:shadow-lg animate-magic-appear"
                         >
                           <Target className="size-3" />
                           <span>حدد نوع المشكلة</span>
