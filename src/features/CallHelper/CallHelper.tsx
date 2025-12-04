@@ -406,6 +406,17 @@ export function CallHelper() {
                         <span>{resolveLoading ? '...' : 'جرب صيغة ثانية'}</span>
                       </button>
 
+                      {/* Refine Category Button - Appears after 3 cycles */}
+                      {cycleCount >= 3 && (
+                        <button
+                          onClick={() => setShowCategorySurvey(true)}
+                          className="flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg animate-magic-appear"
+                        >
+                          <Target className="size-3" />
+                          <span>حدد نوع المشكلة</span>
+                        </button>
+                      )}
+
                       {/* Center: Advanced Mode */}
                       <button
                         onClick={() => {
@@ -576,6 +587,17 @@ export function CallHelper() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Category Survey Dialog */}
+      <CategorySurveyDialog
+        open={showCategorySurvey}
+        onOpenChange={setShowCategorySurvey}
+        onSubmit={(category) => {
+          setSelectedCategory(category);
+          // Re-generate with category filter
+          handleGenerate();
+        }}
+      />
     </div>
   );
 }
