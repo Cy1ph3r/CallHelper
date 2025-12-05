@@ -3535,3 +3535,19 @@ html {
   animation: magic-appear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
+/* Pulse animation for urgent attention */
+@keyframes pulse-urgent {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(251, 146, 60, 0);
+  }
+}
+
+.animate-pulse-urgent {
+  animation: pulse-urgent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

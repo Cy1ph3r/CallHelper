@@ -375,6 +375,24 @@ export function CallHelper() {
                   className="text-right min-h-[200px] resize-none border-2 border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-slate-800/50 rounded-lg px-4 py-3 transition-all"
                 />
                 
+                {/* Low Accuracy Warning - Show when accuracy <= 40% */}
+                {generatedText && (() => {
+                  const maxScore = 10;
+                  const percentage = currentMatchScore !== null ? Math.min(Math.round((currentMatchScore / maxScore) * 100), 100) : 0;
+                  
+                  if (percentage <= 40) {
+                    return (
+                      <div className="flex items-center gap-3 p-4 bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-300 dark:border-orange-700 rounded-lg mt-3">
+                        <AlertCircle className="size-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                        <p className="text-sm text-orange-800 dark:text-orange-300 text-right flex-1 font-medium">
+                          الوصف غير واضح - ساعدنا بتحديد نوع المشكلة للحصول على نتائج أفضل
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+                
                 {/* Action Buttons - Hide when accuracy is 80% or higher */}
                 {generatedText && (() => {
                   const maxScore = 10;
@@ -406,11 +424,13 @@ export function CallHelper() {
                         <span>{resolveLoading ? '...' : 'جرب صيغة ثانية'}</span>
                       </button>
 
-                      {/* Refine Category Button - Appears after 3 cycles */}
-                      {cycleCount >= 3 && (
+                      {/* Refine Category Button - Show immediately if accuracy <=40%, otherwise after 3 cycles */}
+                      {(percentage <= 40 || cycleCount >= 3) && (
                         <button
                           onClick={() => setShowCategorySurvey(true)}
-                          className="flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-semibold shadow-md hover:shadow-lg animate-magic-appear"
+                          className={`flex items-center gap-2 px-3 py-2.5 text-xs rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-semibold shadow-md hover:shadow-lg ${
+                            percentage <= 40 ? 'animate-pulse-urgent' : 'animate-magic-appear'
+                          }`}
                         >
                           <Target className="size-3" />
                           <span>حدد نوع المشكلة</span>
