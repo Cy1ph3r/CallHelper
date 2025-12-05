@@ -112,11 +112,19 @@ class UmrahAgent(SmartAgent):
                 else:
                     print(f"  ⚠️ Case {case_id} not added (score = 0)")
 
-            # Sort by score (highest first) and return top matches
-            scored_cases.sort(key=lambda x: x["MatchScore"], reverse=True)
+            # Calculate match ratio for tie-breaking (percentage of keywords matched)
+            for case in scored_cases:
+                total_keywords = len(case.get("MainKeywords", []))
+                matched_main = case["MatchScore"] // 2  # Each main keyword is worth 2 points
+                match_ratio = matched_main / total_keywords if total_keywords > 0 else 0
+                case["MatchRatio"] = match_ratio
+                print(f"  {case.get('CaseID')}: {matched_main}/{total_keywords} main keywords = {match_ratio:.2%} ratio")
+            
+            # Sort by score first, then by match ratio (prefer cases with higher % of keywords matched)
+            scored_cases.sort(key=lambda x: (x["MatchScore"], x["MatchRatio"]), reverse=True)
             print(f"\n[DEBUG] Final results: {len(scored_cases)} matching cases")
             for i, case in enumerate(scored_cases[:limit]):
-                print(f"  {i+1}. {case.get('CaseID')} - Score: {case.get('MatchScore')}")
+                print(f"  {i+1}. {case.get('CaseID')} - Score: {case.get('MatchScore')} - Ratio: {case.get('MatchRatio', 0):.2%}")
             return scored_cases[:limit]
             
         except Exception as e:
