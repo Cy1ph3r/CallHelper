@@ -375,8 +375,8 @@ export function CallHelper() {
                     readOnly
                     className="text-right min-h-[200px] resize-none border-2 border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-slate-800/50 rounded-lg px-4 py-3 transition-all"
                     style={{
-                      filter: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 'blur(10px)' : 'none',
-                      opacity: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 0.4 : 1,
+                      filter: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 'blur(4px)' : 'none',
+                      opacity: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 0.75 : 1,
                       userSelect: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 'none' : 'auto',
                       pointerEvents: generatedText && currentMatchScore !== null && Math.min(Math.round((currentMatchScore / 10) * 100), 100) <= 40 ? 'none' : 'auto'
                     }}
